@@ -1,0 +1,94 @@
+// ============================================================================
+// PRISMA SCHEMA - PERSONAL FINANCE TRACKER
+// Hệ thống Quản lý Thu Chi Cá nhân (PostgreSQL)
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Phân loại Thu nhập (INCOME) hoặc Chi tiêu (EXPENSE)
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+/// Bảng Người dùng (Users)
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Quan hệ 1-N: Một người dùng có thể tự tạo nhiều danh mục cá nhân
+  categories   Category[]
+  // Quan hệ 1-N: Một người dùng có nhiều giao dịch thu/chi
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+/// Bảng Danh mục Thu/Chi (Categories)
+/// Hỗ trợ 2 loại danh mục:
+/// 1. Danh mục mặc định hệ thống: isDefault = true, userId = null (Mọi user đều xem/chọn được, không được sửa/xóa)
+/// 2. Danh mục cá nhân: isDefault = false, userId = <ID của user> (Chỉ chủ sở hữu mới xem, sửa, xóa được)
+model Category {
+  id          String          @id @default(cuid())
+  name        String
+  type        TransactionType
+  icon        String          @default("Tag")
+  color       String          @default("#6366f1")
+  description String?
+  isDefault   Boolean         @default(false) @map("is_default")
+
+  // Khóa ngoại liên kết tới User (nullable cho danh mục mặc định của hệ thống)
+  userId      String?         @map("user_id")
+  user        User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Quan hệ 1-N tới các giao dịch thuộc danh mục này
+  transactions Transaction[]
+
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  // Ràng buộc duy nhất (Unique) ngăn trùng tên danh mục trong cùng phân loại Thu/Chi của người dùng
+  @@unique([userId, type, name])
+  // Đánh index tối ưu hóa truy vấn lọc danh mục theo user và loại Thu/Chi
+  @@index([userId, type])
+  @@index([isDefault, type])
+  @@map("categories")
+}
+
+/// Bảng Giao dịch Thu/Chi (Transactions) - Phục vụ Sprint 2 & Sprint 3
+model Transaction {
+  id         String          @id @default(cuid())
+  // Sử dụng Decimal(15, 2) để lưu số tiền VND chính xác tuyệt đối, tránh sai số dấu phẩy động
+  amount     Decimal         @db.Decimal(15, 2)
+  type       TransactionType
+  date       DateTime        @default(now())
+  note       String?
+
+  // Khóa ngoại bắt buộc liên kết tới User sở hữu giao dịch
+  userId     String          @map("user_id")
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Khóa ngoại liên kết tới Danh mục
+  categoryId String          @map("category_id")
+  category   Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime        @updatedAt @map("updated_at")
+
+  // Index tối ưu hóa truy vấn thống kê theo khoảng thời gian và loại giao dịch
+  @@index([userId, date(sort: Desc)])
+  @@index([userId, type])
+  @@index([categoryId])
+  @@map("transactions")
+}

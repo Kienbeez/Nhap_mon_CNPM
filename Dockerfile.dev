@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+# Cài đặt openssl và libc6-compat cần thiết cho Prisma Engine trên Alpine Linux
+RUN apk add --no-cache openssl libc6-compat
+
+WORKDIR /app
+
+# Copy file quản lý dependencies trước để tối ưu Docker layer cache
+COPY package.json ./
+COPY prisma ./prisma/
+
+# Cài đặt toàn bộ dependencies
+RUN npm install
+
+# Khởi tạo Prisma Client
+RUN npx prisma generate
+
+# Copy mã nguồn còn lại
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
