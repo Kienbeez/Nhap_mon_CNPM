@@ -1,10 +1,10 @@
-# 💰 Personal Finance Tracker (Quản lý Thu Chi Cá nhân)
+# Personal Finance Tracker (Quản lý Thu Chi Cá nhân)
 
 Hệ thống Quản lý Tài chính Cá nhân hiện đại, chuẩn kiến trúc Fullstack xây dựng trên nền tảng **Next.js 14 (App Router)**, **TypeScript**, **TailwindCSS**, **Shadcn/ui**, **Prisma ORM** và **PostgreSQL** thông qua **Docker Compose**.
 
 ---
 
-## 🚀 Trạng thái triển khai: Sprint 1 (Nền tảng & Danh mục)
+## Trạng thái triển khai: Sprint 1 (Nền tảng & Danh mục)
 
 Đã hoàn thành toàn bộ mục tiêu của **Sprint 1** theo đúng Kế hoạch Agile:
 - [x] **Task 1.1: Thiết kế CSDL & Giao diện khung (UI)**
@@ -29,7 +29,7 @@ Hệ thống Quản lý Tài chính Cá nhân hiện đại, chuẩn kiến trú
 
 ---
 
-## 🛠 Hướng dẫn khởi chạy bằng Docker Compose
+## Hướng dẫn khởi chạy bằng Docker Compose
 
 ### Bước 1: Mở Docker Desktop
 Đảm bảo ứng dụng **Docker Desktop** trên máy tính của bạn đã được khởi động và icon hiển thị trạng thái màu xanh (Running).
@@ -50,13 +50,13 @@ Container sẽ tự động thực hiện:
 
 ### Bước 3: Truy cập ứng dụng
 Mở trình duyệt web và truy cập:
-👉 **[http://localhost:3000](http://localhost:3000)**
+**[http://localhost:3000](http://localhost:3000)**
 
 Hệ thống sẽ tự động chuyển bạn đến trang Đăng ký / Đăng nhập. Sau khi tạo tài khoản, bạn sẽ được đưa ngay vào trang Quản lý Danh mục.
 
 ---
 
-## 🧪 Chạy Unit Test
+## Chạy Unit Test
 
 Để kiểm tra toàn bộ test case (Mã hóa bcrypt, JWT jose, Zod Schemas, Format VND):
 
@@ -66,7 +66,7 @@ docker compose exec web npm run test
 
 ---
 
-## 📂 Cấu trúc thư mục
+## Cấu trúc thư mục
 
 ```text
 ├── docker-compose.yml       # Điều phối container web và postgres

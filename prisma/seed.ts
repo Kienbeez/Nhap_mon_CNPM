@@ -112,7 +112,7 @@ const DEFAULT_CATEGORIES: DefaultCategorySeed[] = [
 ];
 
 async function main() {
-  console.log('🌱 Bắt đầu khởi tạo dữ liệu danh mục mặc định (Seed Default Categories)...');
+  console.log('Bắt đầu khởi tạo dữ liệu danh mục mặc định (Seed Default Categories)...');
 
   let createdCount = 0;
   let updatedCount = 0;
@@ -155,13 +155,13 @@ async function main() {
   }
 
   console.log(
-    `✅ Hoàn tất Seed! Đã tạo mới ${createdCount} danh mục và cập nhật ${updatedCount} danh mục mặc định.`
+    `Hoàn tất Seed! Đã tạo mới ${createdCount} danh mục và cập nhật ${updatedCount} danh mục mặc định.`
   );
 }
 
 main()
   .catch((error) => {
-    console.error('❌ Lỗi trong quá trình seed dữ liệu:', error);
+    console.error('Lỗi trong quá trình seed dữ liệu:', error);
     process.exit(1);
   })
   .finally(async () => {
