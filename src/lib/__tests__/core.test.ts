@@ -6,7 +6,12 @@ import {
   verifyJwtToken,
   getJwtSecretKey,
 } from '../auth';
-import { registerSchema, loginSchema, categorySchema } from '../validations';
+import {
+  registerSchema,
+  loginSchema,
+  categorySchema,
+  transactionSchema,
+} from '../validations';
 import { formatCurrencyVND } from '../utils';
 
 describe('Unit Tests: Hệ thống Xác thực & Mã hóa (auth.ts / jwt.ts)', () => {
@@ -122,6 +127,49 @@ describe('Unit Tests: Kiểm tra dữ liệu đầu vào (validations.ts)', () =
     ).toBe(true);
     expect(
       loginSchema.safeParse({ email: 'not-an-email', password: '123' }).success
+    ).toBe(false);
+  });
+
+  it('Kiểm tra hợp lệ cho Schema Giao dịch Thu/Chi (transactionSchema - Sprint 2)', () => {
+    const validTx = transactionSchema.safeParse({
+      amount: '250000',
+      type: 'EXPENSE',
+      categoryId: 'cat_an_uong',
+      date: '2026-11-20',
+      note: '  Ăn trưa văn phòng  ',
+    });
+    expect(validTx.success).toBe(true);
+    if (validTx.success) {
+      expect(validTx.data.amount).toBe(250000);
+      expect(validTx.data.note).toBe('Ăn trưa văn phòng');
+      expect(validTx.data.date).toBeInstanceOf(Date);
+    }
+
+    // Chặn số tiền <= 0
+    expect(
+      transactionSchema.safeParse({
+        amount: 0,
+        type: 'EXPENSE',
+        categoryId: 'cat_1',
+      }).success
+    ).toBe(false);
+
+    expect(
+      transactionSchema.safeParse({
+        amount: -50000,
+        type: 'INCOME',
+        categoryId: 'cat_1',
+      }).success
+    ).toBe(false);
+
+    // Chặn ngày không hợp lệ
+    expect(
+      transactionSchema.safeParse({
+        amount: 100000,
+        type: 'INCOME',
+        categoryId: 'cat_1',
+        date: 'invalid-date-string',
+      }).success
     ).toBe(false);
   });
 });

@@ -651,7 +651,7 @@ export default function CategoriesPage() {
             <DialogDescription className="pt-2">
               Bạn có chắc chắn muốn xóa danh mục{' '}
               <strong className="text-slate-900 font-bold">
-                "{deletingCategory?.name}"
+                &ldquo;{deletingCategory?.name}&rdquo;
               </strong>{' '}
               không? Thao tác này không thể hoàn tác.
             </DialogDescription>

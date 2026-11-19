@@ -35,8 +35,8 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Đăng ký không thành công');
       }
 
-      // Đăng ký thành công và đã tự động cấp cookie session -> Chuyển vào Dashboard
-      router.push('/categories');
+      // Đăng ký thành công và đã tự động cấp cookie session -> Chuyển vào Trang chủ Dashboard (/)
+      router.push('/');
       router.refresh();
     } catch (err: any) {
       setError(err.message || 'Đã có lỗi xảy ra khi tạo tài khoản.');

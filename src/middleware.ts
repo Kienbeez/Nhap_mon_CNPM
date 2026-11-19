@@ -4,6 +4,9 @@ import { AUTH_COOKIE_NAME, verifyJwtToken } from '@/lib/jwt';
 // Các đường dẫn trang yêu cầu phải đăng nhập
 const PROTECTED_PAGE_PREFIXES = ['/categories', '/transactions', '/reports'];
 
+// Các đường dẫn API yêu cầu xác thực JWT
+const PROTECTED_API_PREFIXES = ['/api/categories', '/api/transactions', '/api/reports'];
+
 // Các trang dành cho khách chưa đăng nhập (nếu đã đăng nhập sẽ chuyển hướng vào trang chính)
 const AUTH_PAGES = ['/login', '/register'];
 
@@ -14,8 +17,8 @@ export async function middleware(request: NextRequest) {
   const session = token ? await verifyJwtToken(token) : null;
   const isAuthenticated = Boolean(session);
 
-  // 1. Bảo vệ các API route yêu cầu xác thực (/api/categories/*)
-  if (pathname.startsWith('/api/categories')) {
+  // 1. Bảo vệ các API route yêu cầu xác thực (/api/categories/*, /api/transactions/*, /api/reports/*)
+  if (PROTECTED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
     if (!isAuthenticated) {
       return NextResponse.json(
         { error: 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.' },
@@ -25,9 +28,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Nếu người dùng đã đăng nhập mà truy cập /login hoặc /register -> chuyển tới /categories
+  // 2. Nếu người dùng đã đăng nhập mà truy cập /login hoặc /register -> chuyển tới Trang chủ (/)
   if (AUTH_PAGES.includes(pathname) && isAuthenticated) {
-    return NextResponse.redirect(new URL('/categories', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   // 3. Nếu người dùng chưa đăng nhập mà truy cập các trang quản lý -> chuyển tới /login

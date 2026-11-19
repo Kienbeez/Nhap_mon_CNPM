@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Wallet,
+  LayoutDashboard,
   Tags,
   ReceiptText,
   BarChart3,
@@ -65,6 +66,13 @@ export default function DashboardLayout({
 
   const navItems = [
     {
+      name: 'Trang chủ',
+      href: '/',
+      icon: LayoutDashboard,
+      current: pathname === '/',
+      status: 'Hub',
+    },
+    {
       name: 'Danh mục Thu/Chi',
       href: '/categories',
       icon: Tags,
@@ -73,11 +81,11 @@ export default function DashboardLayout({
     },
     {
       name: 'Quản lý Giao dịch',
-      href: '#',
+      href: '/transactions',
       icon: ReceiptText,
-      current: false,
+      current: pathname.startsWith('/transactions'),
       status: 'Sprint 2',
-      disabled: true,
+      disabled: false,
     },
     {
       name: 'Báo cáo Thống kê',
@@ -230,7 +238,7 @@ export default function DashboardLayout({
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-500 font-medium">Kế hoạch Agile:</span>
             <Badge variant="success" className="font-medium text-xs">
-              Sprint 1: Nền tảng & Danh mục
+              Sprint 2: Quản lý Giao dịch
             </Badge>
           </div>
 

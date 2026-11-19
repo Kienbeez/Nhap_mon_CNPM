@@ -112,3 +112,49 @@ export const categorySchema = z.object({
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type CategoryInput = z.infer<typeof categorySchema>;
+
+/**
+ * Schema kiểm tra dữ liệu Thêm mới / Cập nhật Giao dịch Thu Chi (Sprint 2)
+ */
+export const transactionSchema = z.object({
+  amount: z.preprocess(
+    (val) => {
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string' && val.trim() !== '') return Number(val);
+      return undefined;
+    },
+    z
+      .number({
+        required_error: 'Vui lòng nhập số tiền giao dịch',
+        invalid_type_error: 'Số tiền giao dịch không hợp lệ',
+      })
+      .finite('Số tiền giao dịch không hợp lệ')
+      .positive('Số tiền giao dịch phải lớn hơn 0')
+      .max(999_999_999_999, 'Số tiền giao dịch không được vượt quá 999.999.999.999 ₫')
+  ),
+  type: transactionTypeSchema,
+  categoryId: z
+    .string({ required_error: 'Vui lòng chọn danh mục' })
+    .trim()
+    .min(1, 'Vui lòng chọn danh mục cho giao dịch'),
+  date: z
+    .union([z.string(), z.date()])
+    .optional()
+    .transform((val) => {
+      if (!val || (typeof val === 'string' && val.trim() === '')) {
+        return new Date();
+      }
+      return val instanceof Date ? val : new Date(val);
+    })
+    .refine((d) => !isNaN(d.getTime()), {
+      message: 'Ngày giao dịch không hợp lệ',
+    }),
+  note: z
+    .string()
+    .trim()
+    .max(255, 'Ghi chú không được vượt quá 255 ký tự')
+    .optional()
+    .nullable(),
+});
+
+export type TransactionInput = z.infer<typeof transactionSchema>;
